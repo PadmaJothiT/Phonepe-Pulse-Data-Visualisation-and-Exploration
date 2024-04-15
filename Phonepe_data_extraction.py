@@ -5,9 +5,6 @@ import json
 import pymysql
 import plotly_express as px
 import matplotlib.pyplot as plt
-import streamlit as st
-from streamlit_option_menu import option_menu
-from PIL import Image
 
 #Agg_tras
 path = "C:/Users/Padma Jothi/Desktop/Capstone/pulse/data/aggregated/transaction/country/india/state/"
@@ -417,8 +414,8 @@ def map_transaction():
                                                             Year int,
                                                             Quarter int,
                                                             Transaction_type varchar(50), 
-                                                            Transaction_count varchar(50), 
-                                                            Transaction_amount varchar(50))'''
+                                                            Transaction_count int, 
+                                                            Transaction_amount float)'''
     cur.execute(create_query3)
     myconnection.commit()
 
@@ -442,8 +439,8 @@ def map_user():
                                                             Year int,
                                                             Quarter int,
                                                             Districts varchar(50), 
-                                                            RegisteredUser varchar(50), 
-                                                            AppOpens varchar(50))'''
+                                                            RegisteredUser int, 
+                                                            AppOpens int)'''
     cur.execute(create_query4)
     myconnection.commit()
 
@@ -467,8 +464,8 @@ def top_trans_states():
                                                             Quarter int,
                                                             States varchar(50), 
                                                             States_Trans_Type varchar(50), 
-                                                            States_Trans_Count varchar(50),
-                                                            States_Trans_Amount varchar(50))'''
+                                                            States_Trans_Count int,
+                                                            States_Trans_Amount float)'''
     cur.execute(create_query5)
     myconnection.commit()
 
@@ -493,8 +490,8 @@ def top_trans_districts():
                                                             Quarter int,
                                                             Districts varchar(50), 
                                                             Districts_Trans_Type varchar(50), 
-                                                            Districts_Trans_Count varchar(50),
-                                                            Districts_Trans_Amount varchar(50))'''
+                                                            Districts_Trans_Count int,
+                                                            Districts_Trans_Amount float)'''
     cur.execute(create_query6)
     myconnection.commit()
 
@@ -519,8 +516,8 @@ def top_trans_pincodes():
                                                             Quarter int,
                                                             Pincodes varchar(50), 
                                                             Pincodes_Trans_Type varchar(50), 
-                                                            Pincodes_Trans_Count varchar(50),
-                                                            Pincodes_Trans_Amount varchar(50))'''
+                                                            Pincodes_Trans_Count int,
+                                                            Pincodes_Trans_Amount float)'''
     cur.execute(create_query7)
     myconnection.commit()
 
@@ -544,7 +541,7 @@ def top_user_states():
     create_query8 = '''create table if not exists top_user_states(Year int,
                                                                 Quarter int,
                                                                 States varchar(50),
-                                                                States_Registeredusers varchar(50))'''
+                                                                States_Registeredusers int)'''
     cur.execute(create_query8)
     myconnection.commit()
 
@@ -566,7 +563,7 @@ def top_user_districts():
     create_query9 = '''create table if not exists top_user_districts(Year int,
                                                                 Quarter int,
                                                                 Districts varchar(50),
-                                                                Districts_Registeredusers varchar(50))'''
+                                                                Districts_Registeredusers int)'''
     cur.execute(create_query9)
     myconnection.commit()
 
@@ -588,7 +585,7 @@ def top_users_pincodes():
     create_query10 = '''create table if not exists top_user_pincodes(Year int,
                                                                     Quarter int,
                                                                     Pincodes varchar(50),
-                                                                    Pincodes_Registeredusers varchar(50))'''
+                                                                    Pincodes_Registeredusers int)'''
     cur.execute(create_query10)
     myconnection.commit()
 
@@ -604,149 +601,3 @@ def top_users_pincodes():
         myconnection.commit()
         
 top_users_pincodes()
-
-
-#Function to fetch data details from the database and convert to dataframe
-
-#Aggregate_Trans
-cur.execute("SELECT * from agg_trans")
-myconnection.commit()
-table1=cur.fetchall()
-
-Agg_Transaction=pd.DataFrame(table1,columns=["State","Year","Quarter","Trans_type","Trans_count","Trans_amount"])
-
-
-#Aggregate_User
-cur.execute("SELECT * from agg_user")
-myconnection.commit()
-table2=cur.fetchall()
-
-Agg_User=pd.DataFrame(table2,columns=["State","Year","Quarter","User_count","User_amount","User_percentage"])
-
-
-#Map_Transaction
-cur.execute("SELECT * from map_trans")
-myconnection.commit()
-table3=cur.fetchall()
-
-Map_Transaction=pd.DataFrame(table3,columns=["State","Year","Quarter","Trans_type","Trans_count","Trans_amount"])
-
-
-#Map_User
-cur.execute("SELECT * from map_user")
-myconnection.commit()
-table4=cur.fetchall()
-
-Map_User=pd.DataFrame(table4,columns=["State","Year","Quarter","Trans_type","Trans_count","Trans_amount"])
-
-
-#Top_Trans_States
-cur.execute("SELECT * from top_trans_states")
-myconnection.commit()
-table5=cur.fetchall()
-
-Top_Trans_States=pd.DataFrame(table5,columns=["Year","Quarter","States","States_Trans_Type","States_Trans_Count","States_Trans_Amount"])
-
-
-#Top_Trans_Districts
-cur.execute("SELECT * from top_trans_districts")
-myconnection.commit()
-table6=cur.fetchall()
-
-Top_Trans_Districts=pd.DataFrame(table6,columns=["Year","Quarter","Districts","Districts_Trans_Type","Districts_Trans_Count","Districts_Trans_Amount"])
-
-
-#Top_Trans_Pincodes
-cur.execute("SELECT * from top_trans_pincodes")
-myconnection.commit()
-table7=cur.fetchall()
-
-Top_Trans_Pincodes=pd.DataFrame(table7,columns=["Year","Quarter","Pincodes","Pincodes_Trans_Type","Pincodes_Trans_Count","Pincodes_Trans_Amount"])
-
-
-#Top_User_States
-cur.execute("SELECT * from top_user_states")
-myconnection.commit()
-table8=cur.fetchall()
-
-Top_User_States=pd.DataFrame(table8,columns=["Year","Quarter","States","States_Registeredusers"])
-
-
-#Top_User_Districts
-cur.execute("SELECT * from top_user_districts")
-myconnection.commit()
-table9=cur.fetchall()
-
-Top_User_Districts=pd.DataFrame(table9,columns=["Year","Quarter","Districts","Districts_Registeredusers"])
-
-
-#Top_User_Pincodes
-cur.execute("SELECT * from top_user_pincodes")
-myconnection.commit()
-table10=cur.fetchall()
-
-Top_User_pincodes=pd.DataFrame(table10,columns=["Year","Quarter","Pincodes","Pincodes_Registeredusers"])
-
-
-
-#STREAMLIT PAGE
-
-icon=Image.open("Phonepe_logo.png")
-image=Image.open("download.jpeg")
-st.set_page_config(page_title="Phonepe Pulse Data Visualization and Exploration",
-                   page_icon=icon,
-                   layout="centered",
-                   initial_sidebar_state="auto")
-
-
-def home_page():
-    st.title("Phonepe Pulse Data Visualization and Exploration")
-    st.image(image,use_column_width=False)
-    st.write("PhonePe is an Indian digital payments and financial services company")
-    st.write(" The PhonePe app, based on the Unified Payments Interface (UPI)")
-    st.write("The PhonePe app is accessible in 11 Indian languages.")
-    st.write("*****BENEFITS OF PHNOEPE USAGES*****")
-    st.write("*****DIGITAL PAYMENTS*****")
-    st.write("*****MERCHANT PAYMENTS*****")
-    st.write("*****EXPLORE VARIOUS CASHBACK*****")
-    st.write("*****SAFE TO USE*****")
-
-with st.sidebar:
-    selected=option_menu("Sub-Categories",["Home","Data_Exploration","Data_Visualisation"],
-                         icons=None,    
-                         orientation="vertical"
-                         )
-    
-if selected == "Home":
-    home_page()
-
-elif selected == "Data_Exploration":
-    st.title("Phonepe Pulse Data Visualization and Exploration")
-    tab1,tab2,tab3 = st.tabs(["Aggregate","Map","Top"])
-
-    with tab1:
-        method_1= st.selectbox("Select the Analysis Method",["Transaction","User"])
-        
-        if method_1 == "Transaction":
-            year_at = st.selectbox("Select the years",Agg_Transaction["Year"])
-
-            quarter_at = st.selectbox("Select the quarters",Agg_Transaction["Quarter"].unique())
-
-            state_at = st.selectbox("Select the states",Agg_Transaction["State"].unique())
-        
-        elif method_1 == "User":
-            year_au = st.selectbox("Select the years",Agg_User["Year"])
-
-            quarter_at = st.selectbox("Select the quarters",Agg_User["Quarter"].unique())
-
-            state_at = st.selectbox("Select the states",Agg_User["State"].unique())
-            
-    with tab2:
-        method_2 = st.selectbox("Select method_2",["Transaction","User"])
-    with tab3:
-        method_3 = st.selectbox("Select method_3",["Transaction","User"])
-
-
-elif selected == "Data_Visualisation":
-    pass
-
