@@ -43,7 +43,7 @@ cur.execute("SELECT * from map_user")
 myconnection.commit()
 table4=cur.fetchall()
 
-Map_User=pd.DataFrame(table4,columns=["State","Year","Quarter","Trans_type","Trans_count","Trans_amount"])
+Map_User=pd.DataFrame(table4,columns=["State","Year","Quarter","Districts","RegisteredUsers","AppOpens"])
 
 
 #Top_Trans_States
