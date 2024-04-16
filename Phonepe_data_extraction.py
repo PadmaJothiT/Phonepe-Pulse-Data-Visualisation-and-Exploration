@@ -3,8 +3,6 @@ import pandas as pd
 import os
 import json
 import pymysql
-import plotly_express as px
-import matplotlib.pyplot as plt
 
 #Agg_tras
 path = "C:/Users/Padma Jothi/Desktop/Capstone/pulse/data/aggregated/transaction/country/india/state/"
@@ -51,12 +49,12 @@ Agg_Trans["State"]=Agg_Trans["State"].str.replace("Dadra & Nagar Haveli & Daman 
 path1 = "C:/Users/Padma Jothi/Desktop/Capstone/pulse/data/aggregated/user/country/india/state/"
 Agg_state_list=os.listdir(path1)
 
-clm={'State':[], 'Year':[],'Quarter':[],'User_count':[], 'User_amount':[], 'User_percentage':[]}
+clm={'State':[], 'Year':[],'Quarter':[],'User_brand':[],'User_count':[], 'User_percentage':[]}
 
 for i in Agg_state_list:
     p_i=path1+i+"/"
     Agg_yr=os.listdir(p_i)
-    
+
     for j in Agg_yr:
         p_j=p_i+j+"/"
         Agg_yr_list=os.listdir(p_j)
@@ -67,11 +65,11 @@ for i in Agg_state_list:
             B=json.load(Data)
             try:
                 for z in B['data']['usersByDevice']:
-                    count=z['brand']
-                    amount=z['count']
+                    brand=z['brand']
+                    count=z['count']
                     percentage=z['percentage']
+                    clm['User_brand'].append(brand)
                     clm['User_count'].append(count)
-                    clm['User_amount'].append(amount)
                     clm['User_percentage'].append(percentage)
                     clm['State'].append(i)
                     clm['Year'].append(j)
@@ -91,7 +89,7 @@ Agg_User["State"]=Agg_User["State"].str.replace("Dadra & Nagar Haveli & Daman & 
 path2 = "C:/Users/Padma Jothi/Desktop/Capstone/pulse/data/map/transaction/hover/country/india/state/"
 Map_state_list=os.listdir(path2)
 
-clm={'State':[], 'Year':[],'Quarter':[],'Transaction_type':[], 'Transaction_count':[], 'Transaction_amount':[]}
+clm={'State':[], 'Year':[],'Quarter':[],'Districts':[],'Transaction_type':[], 'Transaction_count':[], 'Transaction_amount':[]}
 
 for i in Map_state_list:
     p_i=path2+i+"/"
@@ -111,7 +109,8 @@ for i in Map_state_list:
               Type=z['metric'][0]['type']
               count=z['metric'][0]['count']
               amount=z['metric'][0]['amount']
-              clm['Transaction_type'].append(Name)
+              clm['Districts'].append(Name)
+              clm['Transaction_type'].append(Type)
               clm['Transaction_count'].append(count)
               clm['Transaction_amount'].append(amount)
               clm['State'].append(i)
@@ -322,6 +321,31 @@ for j in Top_years:
             clm['Year'].append(j)
             clm['Quarter'].append(int(k.strip('.json')))
 
+#Succesfully created a dataframe#Top_user_districts
+path5 = "C:/Users/Padma Jothi/Desktop/Capstone/pulse/data/top/user/country/india/"
+Top_years = ['2018', '2019', '2020', '2021', '2022', '2023']
+Top_user=os.listdir(path5)
+
+clm={'Year':[],'Quarter':[],'Districts':[],'Districts_Registeredusers':[]}
+                            
+for j in Top_years:
+    p_j=path5+j+"/"
+    Top_yr_list=os.listdir(p_j)
+        
+    for k in Top_yr_list:
+        p_k=p_j+k
+        Data=open(p_k,'r')
+        F=json.load(Data)
+
+
+        for z in F["data"]["districts"]:
+            name=z['name']
+            registeredUsers=z['registeredUsers']
+            clm['Districts'].append(name)
+            clm['Districts_Registeredusers'].append(registeredUsers)
+            clm['Year'].append(j)
+            clm['Quarter'].append(int(k.strip('.json')))
+
 #Succesfully created a dataframe
 Top_User_Districts=pd.DataFrame(clm)
 
@@ -388,20 +412,20 @@ def aggregate_user():
     create_query2 = '''create table if not exists agg_user (State varchar(50),
                                                             Year int,
                                                             Quarter int,
-                                                            User_count varchar(50), 
-                                                            User_amount int, 
+                                                            User_brand varchar(50), 
+                                                            User_count int, 
                                                             User_percentage float)'''
     cur.execute(create_query2)
     myconnection.commit()
 
     for index,row in Agg_User.iterrows():
-        insert_query2 = '''INSERT INTO agg_user (State, Year, Quarter, User_count, User_amount, User_percentage)
+        insert_query2 = '''INSERT INTO agg_user (State, Year, Quarter, User_brand, User_count, User_percentage)
                                                             values(%s,%s,%s,%s,%s,%s)'''
         values = (row["State"],
                 row["Year"],
                 row["Quarter"],
+                row["User_brand"],
                 row["User_count"],
-                row["User_amount"],
                 row["User_percentage"]
                 )
         cur.execute(insert_query2,values)
@@ -413,6 +437,7 @@ def map_transaction():
     create_query3 = '''create table if not exists map_trans (State varchar(50),
                                                             Year int,
                                                             Quarter int,
+                                                            Districts varchar(50),
                                                             Transaction_type varchar(50), 
                                                             Transaction_count int, 
                                                             Transaction_amount float)'''
@@ -420,11 +445,12 @@ def map_transaction():
     myconnection.commit()
 
     for index,row in Map_Trans.iterrows():
-        insert_query3 = '''INSERT INTO map_trans (State, Year, Quarter, Transaction_type, Transaction_count, Transaction_amount)
-                                                            values(%s,%s,%s,%s,%s,%s)'''
+        insert_query3 = '''INSERT INTO map_trans (State, Year, Quarter, Districts, Transaction_type, Transaction_count, Transaction_amount)
+                                                            values(%s,%s,%s,%s,%s,%s,%s)'''
         values = (row["State"],
                 row["Year"],
                 row["Quarter"],
+                row["Districts"],
                 row["Transaction_type"],
                 row["Transaction_count"],
                 row["Transaction_amount"]
@@ -464,9 +490,10 @@ def top_trans_states():
                                                             Quarter int,
                                                             States varchar(50), 
                                                             States_Trans_Type varchar(50), 
-                                                            States_Trans_Count int,
+                                                            States_Trans_Count bigint,
                                                             States_Trans_Amount float)'''
     cur.execute(create_query5)
+    
     myconnection.commit()
 
     for index,row in Top_Trans_States.iterrows():
