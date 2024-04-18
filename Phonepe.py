@@ -98,10 +98,10 @@ def aggre_trans_y(df,years,quarter):
     A_Trans_G = A_Trans.groupby("Trans_type")[["Trans_count","Trans_amount"]].sum()
     A_Trans_G.reset_index(inplace=True)
 
-    fig_pie_count = px.pie(A_Trans_G,values="Trans_count",names="Trans_type",title=f"{years} Q{quarter} Aggregate Transaction Count",color_discrete_sequence=px.colors.sequential.haline)
+    fig_pie_count = px.pie(A_Trans_G,values="Trans_count",names="Trans_type",title=f"{years} Q{quarter} Aggregate Transaction Count",color_discrete_sequence=px.colors.sequential.haline,height=600,width=1000)
     st.plotly_chart(fig_pie_count)
     
-    fig_pie_amount = px.pie(A_Trans_G,values="Trans_amount",names="Trans_type",title=f"{years} Q{quarter} Aggregate Transaction Amount",color_discrete_sequence=px.colors.sequential.Pinkyl_r)
+    fig_pie_amount = px.pie(A_Trans_G,values="Trans_amount",names="Trans_type",title=f"{years} Q{quarter} Aggregate Transaction Amount",color_discrete_sequence=px.colors.sequential.Pinkyl_r,height=600,width=1000)
     st.plotly_chart(fig_pie_amount)
 
 
@@ -121,29 +121,29 @@ def aggre_trans_s(df,year):
 
     states_name.sort()
         
-    fig_map_state = px.choropleth(A_Trans_SG,geojson = data1,locations ="State",featureidkey= "properties.ST_NM",
+    fig_agg_cmap = px.choropleth(A_Trans_SG,geojson = data1,locations ="State",featureidkey= "properties.ST_NM",
                                     color = "Trans_count", color_continuous_scale="Ylgnbu",hover_name = "State",
-                                    title = f"{year} TRANSACTION COUNT",fitbounds = "locations")
-    fig_map_state.update_geos(visible = False)
-    st.plotly_chart(fig_map_state)
+                                    title = f"{year} TRANSACTION COUNT",fitbounds = "locations",height=800,width=1000)
+    fig_agg_cmap.update_geos(visible = False)
+    st.plotly_chart(fig_agg_cmap)
 
-    fig_map_state = px.choropleth(A_Trans_SG,geojson = data1,locations ="State",featureidkey= "properties.ST_NM",
+    fig_agg_amap = px.choropleth(A_Trans_SG,geojson = data1,locations ="State",featureidkey= "properties.ST_NM",
                                     color = "Trans_amount", color_continuous_scale="Tealrose",hover_name = "State",
-                                    title = f"{year} TRANSACTION AMOUNT",fitbounds = "locations")
-    fig_map_state.update_geos(visible = False)
-    st.plotly_chart(fig_map_state)
+                                    title = f"{year} TRANSACTION AMOUNT",fitbounds = "locations",height=800,width=1000)
+    fig_agg_amap.update_geos(visible = False)
+    st.plotly_chart(fig_agg_amap)
 
 def aggre_user_y(df,years,quarter):
     A_User = df[(df["Year"]==years) & (df["Quarter"]==quarter)]
     A_User.reset_index(drop=True,inplace=True)
 
-    A_User_G = A_User.groupby("User_count")[["User_amount","User_percentage"]].sum()
+    A_User_G = A_User.groupby("User_brand")[["User_count","User_percentage"]].sum()
     A_User_G.reset_index(inplace=True)
 
-    fig_bar_count = px.bar(A_User_G,x="User_count",y="User_amount",title=f"{years} Q{quarter} Aggregate User Amount",color_discrete_sequence=px.colors.sequential.Blackbody)
+    fig_bar_count = px.bar(A_User_G,x="User_brand",y="User_count",title=f"{years} Q{quarter} Aggregate User Count",color_discrete_sequence=px.colors.sequential.Blackbody,height=600,width=1000)
     st.plotly_chart(fig_bar_count)
 
-    fig_bar_amount = px.bar(A_User_G,x="User_count",y="User_percentage",title=f"{years} Q{quarter} Aggregate User Percaentage",color_discrete_sequence=px.colors.sequential.Plotly3_r)
+    fig_bar_amount = px.bar(A_User_G,x="User_brand",y="User_percentage",title=f"{years} Q{quarter} Aggregate User Percaentage",color_discrete_sequence=px.colors.sequential.Plotly3_r,height=600,width=1000)
     st.plotly_chart(fig_bar_amount)
 
 
@@ -154,7 +154,7 @@ def map_trans_y(df,years,quarter):
     M_Trans_G = M_Trans.groupby("Districts")[["Trans_count","Trans_amount"]].sum()
     M_Trans_G.reset_index(inplace=True)
 
-    fig_scatter_chart = px.scatter(M_Trans_G, x="Trans_count", y="Trans_amount", color="Districts",size='Trans_count', hover_data=['Trans_amount'])
+    fig_scatter_chart = px.scatter(M_Trans_G, x="Trans_count", y="Trans_amount", color="Districts",size='Trans_count', hover_data='Trans_amount',height=600,width=1200)
     st.plotly_chart(fig_scatter_chart)
 
 
@@ -175,7 +175,7 @@ def top_trans_p(df,year,quarter):
     T_Trans_G = T_Trans.groupby("Pincodes")[["Trans_count","Trans_amount"]].sum().reset_index()
 
     fig_top_plot_1= px.line(T_Trans_G, x= "Pincodes", y= ["Trans_count","Trans_amount"], markers= True,
-                                title= "Top Pincode Count and Amount in Transaction wise",color_discrete_sequence= px.colors.sequential.Rainbow_r)
+                                title= f"{year} Q{quarter} Top Pincode Count and Amount in Transaction wise",color_discrete_sequence= px.colors.sequential.Rainbow_r,height=600,width=1000)
     st.plotly_chart(fig_top_plot_1)
 
 def top_user_p(df,year,quarter):
@@ -184,7 +184,7 @@ def top_user_p(df,year,quarter):
 
     T_Trans_G = T_User.groupby("Pincodes")[["Registeredusers"]].sum().reset_index()
 
-    fig_top_pin = px.scatter(T_Trans_G, x="Pincodes", y="Registeredusers", color="Pincodes",size='Registeredusers')
+    fig_top_pin = px.scatter(T_Trans_G, x="Pincodes", y="Registeredusers", color="Pincodes",size='Registeredusers',title=f"{year} Q{quarter}Top Registeredusers in Pincodes ")
     fig_top_pin.update_traces(visible=True)
     st.plotly_chart(fig_top_pin)
 
@@ -276,7 +276,7 @@ def ques10():
 
 #STREAMLIT PAGE
 icon=Image.open("Phonepe_logo.png")
-image=Image.open("Phonepe.gif")
+image=Image.open("PhonePe_Logo.wine.png")
 st.set_page_config(page_title="Phonepe Pulse Data Visualization and Exploration",
                    page_icon=icon,
                    layout="wide",
@@ -284,14 +284,25 @@ st.set_page_config(page_title="Phonepe Pulse Data Visualization and Exploration"
 
 
 def home_page():
-    st.title("Phonepe Pulse Data Visualization and Exploration")
-    st.image(image,use_column_width=False,output_format='GIF')
-    st.write("*PhonePe is an Indian digital payments and financial services company.*")
-    st.write("*The PhonePe app, based on the Unified Payments Interface (UPI).*")
-    st.write("*The PhonePe app is accessible in 11 Indian languages.*")
+    st.title("PHONEPE PULSE DATA VISUALISATION AND EXPLORATION")
+    col1,col2=st.columns(2)
+    with col1:
+        st.image(image,use_column_width=True,caption='Phonepe')
+    with col2:
+        st.markdown(" ")
+        st.markdown(" ")
+        st.markdown(" ")
+        st.markdown(" ")
+        st.markdown(" ")
+        st.markdown(" ")
+        st.markdown(" ")
+        st.markdown(" ")
+        st.write("**PhonePe is an Indian digital payments and financial services company.**")
+        st.write("**The PhonePe app, based on the Unified Payments Interface (UPI).**")
+        st.write("**The PhonePe app is accessible in 11 Indian languages.**")
+        st.write("**It was incorporated in December 2015.**")
     st.divider()
     st.subheader("***BENEFITS OF PHONEPE***")
-    
     with st.expander("**DIGITAL PAYMENTS**"):
         st.write("PhonePe is India’s most trusted digital payment partner.It helps seamlessly process 100% online payments from your customers and is absolutely secure. It also equipped to handle large-scale transactions with best-in-class success rates.")
 
@@ -315,8 +326,8 @@ def home_page():
     label="***Click on the button to download the app***",
     data=url,
     file_name='Phonepe App',
-    mime='text/csv',
-)
+    mime='text/csv'
+    )
 
 with st.sidebar:
     selected=option_menu("Sub-Categories",["Home","Data_Exploration","Data_Visualisation"],
@@ -328,7 +339,7 @@ if selected == "Home":
     home_page()
 
 elif selected == "Data_Exploration":
-    st.title("Phonepe Pulse Data Visualization and Exploration")
+    st.title("EXPLORING THE EXTRACTED DATA WITH VISUALS")
     tab1,tab2,tab3 = st.tabs(["Aggregate","Map","Top"])
 
     with tab1:
@@ -374,6 +385,7 @@ elif selected == "Data_Exploration":
 
 
 elif selected == "Data_Visualisation":
+    st.title("VISUALISING THI EXTRACTED IN QUERIES")
     ques = st.selectbox("**Select the Question**",('States with highest transaction amount',
                                                     'Top mobile brands of user count',
                                                     'Top 10 districts with highest transaction count',
