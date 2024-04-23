@@ -98,7 +98,7 @@ def aggre_trans_y(df,years,quarter):
     A_Trans_G = A_Trans.groupby("Trans_type")[["Trans_count","Trans_amount"]].sum()
     A_Trans_G.reset_index(inplace=True)
 
-    fig_pie_count = px.pie(A_Trans_G,values="Trans_count",names="Trans_type",title=f"{years} Q{quarter} Aggregate Transaction Count",color_discrete_sequence=px.colors.sequential.haline,height=600,width=1000)
+    fig_pie_count = px.pie(A_Trans_G,values="Trans_count",names="Trans_type",title=f"{years} Q{quarter} Aggregate Transaction Count",color_discrete_sequence=px.colors.sequential.Darkmint_r,height=600,width=1000)
     st.plotly_chart(fig_pie_count)
     
     fig_pie_amount = px.pie(A_Trans_G,values="Trans_amount",names="Trans_type",title=f"{years} Q{quarter} Aggregate Transaction Amount",color_discrete_sequence=px.colors.sequential.Pinkyl_r,height=600,width=1000)
@@ -122,15 +122,15 @@ def aggre_trans_s(df,year):
     states_name.sort()
         
     fig_agg_cmap = px.choropleth(A_Trans_SG,geojson = data1,locations ="State",featureidkey= "properties.ST_NM",
-                                    color = "Trans_count", color_continuous_scale="Ylgnbu",hover_name = "State",
+                                    color = "Trans_count", color_continuous_scale="temps",hover_name = "State",
                                     title = f"{year} TRANSACTION COUNT",fitbounds = "locations",height=800,width=1000)
     fig_agg_cmap.update_geos(visible = False)
     st.plotly_chart(fig_agg_cmap)
 
     fig_agg_amap = px.choropleth(A_Trans_SG,geojson = data1,locations ="State",featureidkey= "properties.ST_NM",
-                                    color = "Trans_amount", color_continuous_scale="Tealrose",hover_name = "State",
+                                    color = "Trans_amount", color_continuous_scale="ylorbr",hover_name = "State",
                                     title = f"{year} TRANSACTION AMOUNT",fitbounds = "locations",height=800,width=1000)
-    fig_agg_amap.update_geos(visible = False)
+    fig_agg_amap.update_geos(visible = True)
     st.plotly_chart(fig_agg_amap)
 
 def aggre_user_y(df,years,quarter):
@@ -276,7 +276,8 @@ def ques10():
 
 #STREAMLIT PAGE
 icon=Image.open("Phonepe_logo.png")
-image=Image.open("PhonePe_Logo.wine.png")
+with open("One-Click Payment.mp4","rb") as video_file:
+    video_bytes=video_file.read()
 st.set_page_config(page_title="Phonepe Pulse Data Visualization and Exploration",
                    page_icon=icon,
                    layout="wide",
@@ -287,20 +288,15 @@ def home_page():
     st.title("PHONEPE PULSE DATA VISUALISATION AND EXPLORATION")
     col1,col2=st.columns(2)
     with col1:
-        st.image(image,use_column_width=True,caption='Phonepe')
+        st.markdown(" ")
+        st.markdown(" ")
+        st.markdown(" ")
+        st.markdown(" ")
+        st.markdown(" ")
+        st.video(video_bytes)
     with col2:
         st.markdown(" ")
-        st.markdown(" ")
-        st.markdown(" ")
-        st.markdown(" ")
-        st.markdown(" ")
-        st.markdown(" ")
-        st.markdown(" ")
-        st.markdown(" ")
-        st.write("**PhonePe is an Indian digital payments and financial services company.**")
-        st.write("**The PhonePe app, based on the Unified Payments Interface (UPI).**")
-        st.write("**The PhonePe app is accessible in 11 Indian languages.**")
-        st.write("**It was incorporated in December 2015.**")
+        st.write("**PhonePe is an Indian digital payments and financial services company.The PhonePe app, based on the Unified Payments Interface (UPI).The PhonePe app is accessible in 11 Indian languages.It was incorporated in December 2015.In 2022, PhonePe became the first UPI TPAP (Third Party Application Providers) App to allow UPI activation through Aadhaar. A year later, it further expanded its services by launching international UPI payments, allowing Indian users traveling abroad to pay foreign merchants with Unified Payments Interface (UPI).[23] As per NPCI's UPI ecosystem statistics, PhonePe currently holds a 50% market share by value of transactions in the UPI market.In August 2023, PhonePe introduced a stock broking app and web platform named Share Market, via its subsidiary PhonePe Wealth Broking. The platform allows users to trade in stocks and mutual funds, including intraday trading and pre-curated investment baskets.In February 2024, PhonePe introduced Indus Appstore, a mobile app store. The app store offers over 2 lakh apps and games across 45 categories.**")
     st.divider()
     st.subheader("***BENEFITS OF PHONEPE***")
     with st.expander("**DIGITAL PAYMENTS**"):
